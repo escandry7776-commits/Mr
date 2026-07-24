@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>گزارش‌ساز خودکار - @taemZarathust</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; }
+        body {
+            background: #0a0e17;
+            color: #e7edf9;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            direction: rtl;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: #111827;
+            padding: 40px 28px;
+            border-radius: 28px;
+            border: 1px solid #1e293b;
+            box-shadow: 0 20px 40px -12px rgba(0,0,0,0.8);
+        }
+        h1 { font-size: 24px; color: #f1f5f9; margin-bottom: 12px; }
+        h1 small {
+            font-size: 14px; font-weight: 400; color: #94a3b8;
+            background: #1e293b; padding: 4px 16px; border-radius: 40px;
+        }
+        .btn {
+            display: inline-block; margin-top: 16px; padding: 16px 36px;
+            background: #2563eb; color: #fff; border-radius: 40px;
+            text-decoration: none; font-weight: 600; border: none;
+            cursor: pointer; font-size: 18px; transition: 0.25s; width: 100%;
+        }
+        .btn:hover { background: #1d4ed8; transform: translateY(-2px); }
+        .btn-green { background: #059669; }
+        .btn-green:hover { background: #047857; }
+        .btn-orange { background: #d97706; }
+        .btn-orange:hover { background: #b45309; }
+        .info {
+            margin-top: 20px; padding: 16px 20px; background: #1e293b;
+            border-radius: 12px; font-size: 13px; color: #94a3b8; word-break: break-all;
+        }
+        .info strong { color: #e2e8f0; }
+        .warning {
+            margin-top: 16px; padding: 16px 20px; background: #1e293b;
+            border-radius: 12px; font-size: 14px; color: #fcd34d;
+            border-right: 4px solid #f59e0b;
+        }
+        .device-badge {
+            display: inline-block; background: #1d4ed8; padding: 6px 20px;
+            border-radius: 40px; font-size: 14px; color: #fff; margin: 16px 0;
+        }
+        .status {
+            margin-top: 12px; padding: 10px; border-radius: 8px;
+            font-size: 13px; display: none;
+        }
+        .status.ok { display: block; background: #064e3b; color: #34d399; }
+        .status.err { display: block; background: #7f1d1d; color: #fca5a5; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📧 گزارش‌ساز خودکار <small>@taemZarathust</small></h1>
+        <div class="device-badge" id="deviceBadge">🔍 در حال تشخیص دستگاه ...</div>
+
+        <!-- دکمه ۱: Gmail Web (کامپیوتر / آیفون) -->
+        <button class="btn" id="gmailWebBtn">✉️ باز کردن Gmail (وب)</button>
+
+        <!-- دکمه ۲: Gmail App (اندروید) -->
+        <button class="btn btn-green" id="gmailAppBtn" style="margin-top:12px;">📱 باز کردن Gmail (اپلیکیشن اندروید)</button>
+
+        <!-- دکمه ۳: mailto fallback -->
+        <button class="btn btn-orange" id="mailtoBtn" style="margin-top:12px;">📧 ایمیل پیش‌فرض دستگاه</button>
+
+        <div class="status" id="statusMsg"></div>
+
+        <div class="info">
+            <strong>📋 گیرندگان:</strong> security@telegram.org, abuse@telegram.org, reports@telegram.org, stopCA@telegram.org, dmca@telegram.org
+        </div>
+
+        <div class="warning">
+            💡 <strong>نکته مهم:</strong>
+            <br>• متن گزارش به صورت خودکار پر می‌شود
+            <br>• فقط دکمه <strong>Send</strong> را بزنید
+            <br>• اگر Gmail وب باز نشد، دکمه «ایمیل پیش‌فرض» را بزنید
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        // ═══════════════════════════════════════════════════════
+        // اطلاعات ایمیل
+        // ═══════════════════════════════════════════════════════
+        const RECIPIENTS = [
+            "security@telegram.org",
+            "abuse@telegram.org",
+            "reports@telegram.org",
+            "stopCA@telegram.org",
+            "dmca@telegram.org"
+        ];
+
+        const SUBJECT = "URGENT: Doxxing and Hacking Threats – Immediate Action Required @taemZarathust";
+
+        // ═══════════════════════════════════════════════════════
+        // [FIX #2] متن کوتاه‌تر برای mailto (حداکثر ~1800 کاراکتر)
+        // متن کامل فقط در Gmail Web استفاده می‌شود
+        // ═══════════════════════════════════════════════════════
+        const BODY_SHORT = `Dear Telegram Abuse Team,
+
+I am reporting a serious case of doxxing, unauthorized publication of private personal information, and threats of hacking on Telegram channel @taemZarathust.
+
+This channel is systematically sharing private phone numbers, personal identities, and sensitive information without consent. The administrator has made explicit threats to hack targeted individuals.
+
+Evidence links:
+https://t.me/taemZarathust/925
+https://t.me/taemZarathust/916
+https://t.me/taemZarathust/902
+https://t.me/taemZarathust/900
+https://t.me/taemZarathust/882
+https://t.me/taemZarathust/880
+https://t.me/taemZarathust/879
+
+Channel: https://t.me/taemZarathust
+
+I request Telegram to:
+1. Permanently remove channel @taemZarathust
+2. Restrict accounts responsible
+3. Investigate associated accounts
+4. Prevent re-creation of this channel
+5. Review attached evidence
+
+This is urgent. People are at risk of real harm.
+
+Thank you for your prompt attention.`;
+
+        // ═══════════════════════════════════════════════════════
+        // متن کامل (فقط برای Gmail Web - محدودیت ندارد)
+        // ═══════════════════════════════════════════════════════
+        const BODY_FULL = `Dear Telegram Abuse Team,
+
+I am writing to report a serious and ongoing case of doxxing, unauthorized publication of private personal information, and threats of hacking on the Telegram channel @taemZarathust.
+
+This channel is systematically sharing private phone numbers, personal identities, and sensitive information belonging to individuals without their consent. The channel administrator has made explicit threats to hack and compromise the accounts of targeted individuals.
+
+Threatening messages:
+https://t.me/taemZarathust/925
+https://t.me/taemZarathust/916
+https://t.me/taemZarathust/902
+https://t.me/taemZarathust/900?single
+
+Additional evidence:
+https://t.me/taemZarathust/882
+https://t.me/taemZarathust/880
+https://t.me/taemZarathust/879?single
+
+Channel link: https://t.me/taemZarathust
+
+I respectfully ask Telegram to investigate this activity and take strong, permanent action under its policies, including:
+
+1. Permanently removing the channel @taemZarathust and all content used to distribute private personal information and threats.
+2. Permanently restricting the accounts responsible for this activity.
+3. Investigating any associated accounts or channels that may be used to continue this activity if the main channel is removed.
+4. Taking additional technical measures available to Telegram to prevent the continued abuse and immediate re-creation of this channel.
+5. Reviewing the attached evidence and the links above, which show examples of the threats and private information being publicly exposed.
+
+This is not a routine complaint. People are at risk of real harm from this activity. I understand that Telegram must investigate reports carefully, but I sincerely ask that this case be treated with urgency given the combination of doxxing and explicit hacking threats.
+
+I would greatly appreciate confirmation that this report has been received and that the matter is being investigated. If additional information or evidence is required, I am willing to provide it.
+
+Thank you for taking the time to review this report. I sincerely hope Telegram will take this matter seriously and act quickly to protect the privacy and safety of the people affected.`;
+
+        // ═══════════════════════════════════════════════════════
+        // توابع کمکی
+        // ═══════════════════════════════════════════════════════
+        function enc(s) {
+            return encodeURIComponent(s);
+        }
+
+        function showStatus(msg, ok) {
+            const el = document.getElementById('statusMsg');
+            el.textContent = msg;
+            el.className = 'status ' + (ok ? 'ok' : 'err');
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // تشخیص دستگاه
+        // ═══════════════════════════════════════════════════════
+        const ua = navigator.userAgent || navigator.vendor || window.opera;
+        const isAndroid = /android/i.test(ua);
+        const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+        const isMobile = isAndroid || isIOS;
+
+        const deviceBadge = document.getElementById('deviceBadge');
+        if (isAndroid) {
+            deviceBadge.textContent = '🤖 دستگاه: اندروید';
+        } else if (isIOS) {
+            deviceBadge.textContent = '🍎 دستگاه: آیفون/آیپد';
+        } else {
+            deviceBadge.textContent = '💻 دستگاه: کامپیوتر';
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // [FIX #1] ساخت لینک Gmail Web (فرمت درست)
+        // فرمت صحیح: mail/?view=cm&fs=1&to=...&su=...&body=...
+        // ═══════════════════════════════════════════════════════
+        function buildGmailWebUrl() {
+            const to = RECIPIENTS.join(',');
+            // Gmail Web محدودیت URL ندارد → متن کامل
+            return 'https://mail.google.com/mail/?view=cm&fs=1'
+                + '&to=' + enc(to)
+                + '&su=' + enc(SUBJECT)
+                + '&body=' + enc(BODY_FULL);
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // [FIX #3] ساخت intent:// برای اندروید (فرمت درست)
+        // ═══════════════════════════════════════════════════════
+        function buildAndroidIntent() {
+            const to = RECIPIENTS.join(',');
+            // mailto با متن کوتاه (محدودیت URL)
+            const mailtoUrl = 'mailto:' + enc(to)
+                + '?subject=' + enc(SUBJECT)
+                + '&body=' + enc(BODY_SHORT);
+
+            // intent:// با ACTION_SENDTO
+            return 'intent:' + mailtoUrl
+                + '#Intent;scheme=mailto;'
+                + 'package=com.google.android.gm;'
+                + 'action=android.intent.action.SENDTO;'
+                + 'S.browser_fallback_url=' + enc(mailtoUrl)
+                + ';end';
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // [FIX #2 + #4] ساخت mailto (متن کوتاه + encoding درست)
+        // ═══════════════════════════════════════════════════════
+        function buildMailtoUrl() {
+            const to = RECIPIENTS.join(',');
+            return 'mailto:' + enc(to)
+                + '?subject=' + enc(SUBJECT)
+                + '&body=' + enc(BODY_SHORT);
+        }
+
+        // ═══════════════════════════════════════════════════════
+        // دکمه ۱: Gmail Web
+        // ═══════════════════════════════════════════════════════
+        document.getElementById('gmailWebBtn').addEventListener('click', function() {
+            const url = buildGmailWebUrl();
+            showStatus('⏳ در حال باز کردن Gmail وب ...', true);
+            // باز کردن در تب جدید
+            const w = window.open(url, '_blank', 'noopener,noreferrer');
+            if (!w) {
+                showStatus('⚠️ مرورگر پنجره جدید را مسدود کرد. لطفاً پاپ‌آپ را مجاز کنید.', false);
+            }
+        });
+
+        // ═══════════════════════════════════════════════════════
+        // دکمه ۲: Gmail App (اندروید)
+        // ═══════════════════════════════════════════════════════
+        document.getElementById('gmailAppBtn').addEventListener('click', function() {
+            if (isAndroid) {
+                showStatus('⏳ در حال باز کردن Gmail ...', true);
+                window.location.href = buildAndroidIntent();
+            } else {
+                // غیر اندروید → Gmail Web
+                showStatus('⏳ در حال باز کردن Gmail وب ...', true);
+                window.open(buildGmailWebUrl(), '_blank', 'noopener,noreferrer');
+            }
+        });
+
+        // ═══════════════════════════════════════════════════════
+        // دکمه ۳: mailto fallback
+        // ═══════════════════════════════════════════════════════
+        document.getElementById('mailtoBtn').addEventListener('click', function() {
+            showStatus('⏳ در حال باز کردن ایمیل پیش‌فرض ...', true);
+            window.location.href = buildMailtoUrl();
+        });
+
+        // ═══════════════════════════════════════════════════════
+        // هدایت خودکار بعد از ۲ ثانیه
+        // ═══════════════════════════════════════════════════════
+        setTimeout(function() {
+            if (isAndroid) {
+                // اندروید → Gmail App
+                document.getElementById('gmailAppBtn').click();
+            } else {
+                // کامپیوتر / آیفون → Gmail Web
+                document.getElementById('gmailWebBtn').click();
+            }
+        }, 2000);
+
+    })();
+    </script>
+</body>
+</html>
